@@ -2,6 +2,7 @@
 jetson nano的入门使用教程笔记
 
 # 内容
+
 ## 查看系统类型：
 `uname -a`
 `uname --help` 查看指令帮助

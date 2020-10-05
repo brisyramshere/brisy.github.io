@@ -10,6 +10,7 @@
 
 
 ## 内容
+
 ### 机器学习基础
 - [参数估计方法](./MachineLearning/参数估计方法.md)
 ### 医学图像分割
@@ -19,7 +20,7 @@
 ### 点云和Mesh处理
 - [Deep Closet Point](./Geometry/DeepClosetPoint.md)
 ### 深度学习前沿
-- [半监督学习总结](./DeepLearning/SelfSupervisedLearning.md)
+- [半监督学习总结](./DeepLearning/SemiSupervisedLearning.md)
 - [深度学习泛华性研究]()
 - [胶囊网络]()
 ### 技术杂糅
