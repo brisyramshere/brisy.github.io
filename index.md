@@ -21,7 +21,7 @@
 ### 深度学习前沿
 - [半监督学习总结](./DeepLearning/SemiSupervisedLearning.md)
 - [深度学习泛华性研究]()
-- [胶囊网络]()
+- [胶囊网络](./CapsuleNetwork.md)
 
 ### 技术杂糅
 - [jetson nano配置入门](./Others/JetsonNano.md)
