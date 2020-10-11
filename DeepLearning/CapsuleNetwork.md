@@ -44,12 +44,10 @@ Capsule向量：
 >2. 向量的方向表示特征的姿态信息；
 >3. 移动特征会改变Capsule向量，不影响特征存在概率。
 
-<center>
-
 ![20201011201630](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011201630.png)
 
+<center>
 胶囊网络分类人脸
-
 </center>
 
 ### 胶囊内的操作
@@ -71,12 +69,10 @@ Capsule向量：
 - 路由（routing）：底层胶囊将输入向量传递到高层胶囊的过程。
 - 高层胶囊和底层胶囊的权重通过动态路由（dynamic routing）获得。
 
-<center>
-
 ![20201011205110](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011205110.png)
 
+<center>
 动态路由示意图
-
 </center>
 
 ## 实例：CapsNet
