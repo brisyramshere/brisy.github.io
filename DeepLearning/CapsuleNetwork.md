@@ -44,9 +44,12 @@ Capsule向量：
 >2. 向量的方向表示特征的姿态信息；
 >3. 移动特征会改变Capsule向量，不影响特征存在概率。
 
-![20201011201630](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011201630.png)
 <center>
+
+![20201011201630](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011201630.png)
+
 胶囊网络分类人脸
+
 </center>
 
 ### 胶囊内的操作
@@ -68,12 +71,24 @@ Capsule向量：
 - 路由（routing）：底层胶囊将输入向量传递到高层胶囊的过程。
 - 高层胶囊和底层胶囊的权重通过动态路由（dynamic routing）获得。
 
+<center>
+
 ![20201011205110](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011205110.png)
-<center>动态路由示意图</center>
+
+动态路由示意图
+
+</center>
 
 ## 实例：CapsNet
 
 ### 整体结构
+
+- 编码器：
+>1. 卷积层
+>2. PrimaryCaps层（32个胶囊）
+>3. DigitCaps层（10个胶囊）
+
+- 解码器：三个全连接层
 
 ![20201011205307](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011205307.png)
 
@@ -81,10 +96,25 @@ Capsule向量：
 
 ![20201011205320](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011205320.png)
 
+解码器：从正确的DigitCap中接受16维向量，经过多个全连接层，重建出原始输入。
+
+**解码器作为正则子**，强制胶囊学习对重建原始图像有用的特征。
+
 ### 损失函数
 
-1. margin loss
-2. reconstruction loss
+1. margin loss：对每一个表征数字k的胶囊分别给出单独的边缘损失函数。类似于神经网络里面的类别损失（交叉熵）。
+
+![20201011210510](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011210510.png)
+
+2. reconstruction loss：解码器将图像重构出来的图像重建损失。重建的784维向量和输入的784维向量求欧氏距离（L2损失）。
+
+### 胶囊可视化
+
+![20201011211559](https://raw.githubusercontent.com/brisyramshere/PicturesBed/master/20201011211559.png)
+
+作者将DigitCap层的16维的胶囊向量的每一个维度以此增加0.05，查看其通过解码器重建的数字的效果，如上图所示。
+
+结论：胶囊向量的每个维度编码了目标数字的各种空间姿态信息。
 
 ## 胶囊网络存在的问题
 
