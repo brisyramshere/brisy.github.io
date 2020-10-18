@@ -1,7 +1,7 @@
-# 介绍
+# MeshMonk代码说明
+
 Mesh Registration开源代码库MeshMonk的代码说明。
 
-# 内容
 ## Downsampler：mesh降采样
 
 >1. 基于OpenMesh的Decimater 实现
@@ -24,9 +24,10 @@ Mesh Registration开源代码库MeshMonk的代码说明。
 3. 设置相关参数：搜索邻域点个数、flag阈值（设置能够形成点对的相似性阈值要求）
 4. 更新affinity matrix：类似于邻接矩阵，根据距离计算target上点到source上点的关联度（只记录最邻近的N个点，稀疏矩阵）。
 5. update：核心函数
-   > 1. 更新affinity矩阵
-   > 2. 根据affnity matrix得到conrrespondence flag（_affinity_to_correspondences()）
-   >     *（矩阵相乘，作用相当于最近N点的加权平均，使用flagThreshold=0.9进行cut off）*
+
+> 1. 更新affinity矩阵
+> 2. 根据affnity matrix得到conrrespondence flag（_affinity_to_correspondences()）
+>     *（矩阵相乘，作用相当于最近N点的加权平均，使用flagThreshold=0.9进行cut off）*
 
 ### SymmetricCorrespondenceFilter：通过双向确定Correspondence
 
@@ -74,8 +75,9 @@ Mesh Registration开源代码库MeshMonk的代码说明。
    > inlierUseOrientation
    > numIterations
    > useScaling
-   > 
+
 3. updata（执行函数，ICP配准）
+
    > 1. 寻找点对：SymmetricCorrespondenceFilter或CorrespondenceFilter
    > 2. Inlier点滤波：inlierDetector
    > 3. 刚体变换：rigidTransformer
@@ -95,30 +97,28 @@ Mesh Registration开源代码库MeshMonk的代码说明。
    > 3. elasticIterations：弹性形变迭代次数
 
 4. 执行变换：updata
+
    > 1. _update_neighbours：使用flann更新，邻域点情况
    > 2. _update_smoothing_weights：根据邻域点情况确定邻域点的权重
    > 3. _update_viscously：粘性变换
    > 4. _update_elastically：弹性变换
    > 5. _update_outlier_transformation：对outlier点进行变换，基于扩散过程
    > 6. _apply_transformation
-7. 返回形变场：get_transformation
+   > 7. 返回形变场：get_transformation
 
 ## NonrigidRegistration：非刚性配准
+
 1. CorrespondenceFilter/SymmetricCorrespondenceFilter 寻找点对
-
 2. InlierDetector：排除离群点
-
 3. ViscoElasticTransformer：粘弹变换
-
 4. 迭代以上步骤
 
-   
+## ScaleShifter
 
-## ScaleShifter：
-
-服务于PyramidNonrigidRegistration，尺度转换 
+服务于PyramidNonrigidRegistration，尺度转换
 
 ## PyramidNonrigidRegistration：多尺度非刚性配准
+
 1. Downsampler：降采样floating
 2. Downsampler：降采样Target
 3. ScaleShifter：迁移floating上一级尺度的特征到当前尺度
