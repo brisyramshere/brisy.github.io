@@ -71,7 +71,7 @@ git config --global user.email "xxx@qq.com"
 ```
 mkdir ~/.ssh
 cd ~/.ssh
-ssh-keygen -t rsa 
+ssh-keygen -t rsa -C xxxx@qq.com
 ```
 根据提示按回车，3次回车，生成私钥和公钥。私钥自己保留，公钥需要告诉我们要访问的ssh服务器，也就是git服务器。
 
@@ -81,5 +81,6 @@ ssh-keygen -t rsa
 
 #### 2）将公钥拷贝给git服务器
 
-本文依然以github为例。
+本文依然以github为例。登陆自己的github账号忘图示的设置里面填就行了，title可以随便填，key填本地电脑生成的公钥。
 
+![](./images/github公钥设置.png)
