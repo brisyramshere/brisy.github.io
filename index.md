@@ -34,4 +34,4 @@
 - [jetson nano配置入门](./Others/JetsonNano.md)
 - [手机刷机总结](./Others/手机刷机相关知识.md)
 - [github账号和ssh配置](./Others/git账号和ssh配置.md)
-- [3D Slicer插件类型总结](./Others/3dSlicerExtentions.md)
+- [3D Slicer使用介绍](./Others/3dSlicerExtentions.md)
