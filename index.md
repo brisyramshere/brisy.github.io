@@ -11,13 +11,12 @@
 
 - [参数估计方法](./MachineLearning/参数估计方法.md)
 
-### 医学图像分割
+### 医学图像分析
 
-- [医学图像分割]()
-
-### 医学图像配准
-
-- [医学图像配准]()
+- [3D Slicer使用介绍](./Others/3dSlicerExtentions.md)
+- [ITK架构设计](./ImageProcess/MedicalImageAnalyse/ITK软件架构.md)
+- [ITK基本数据结构](./ImageProcess/MedicalImageAnalyse/ITK数据结构.md)
+- [MONAI-开源医学影像框架介绍](./ImageProcess/MedicalImageAnalyse/monai.md)
 
 ### 点云和Mesh处理
 
@@ -34,4 +33,4 @@
 - [jetson nano配置入门](./Others/JetsonNano.md)
 - [手机刷机总结](./Others/手机刷机相关知识.md)
 - [github账号和ssh配置](./Others/git账号和ssh配置.md)
-- [3D Slicer使用介绍](./Others/3dSlicerExtentions.md)
+
