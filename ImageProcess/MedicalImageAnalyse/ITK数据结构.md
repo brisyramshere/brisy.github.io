@@ -34,10 +34,85 @@ itk::PointSet
 
 点集由多个点即成。如果有N个点，则点集可表示为Nx3的矩阵。
 
+### pointset的创建
+
 ```cpp
-itk:
+//别名声明一个针对特定数据类型和维度的point set类型
+using PointSetType = itk::PointSet<unsigned short, 3>;
+//实例化一个对象，需要用一个智能指针接受
+PointSetType::Pointer pointsSet = PointSetType::New();
+
+//声明一个点的类型，这个类型不是直接用itk::Point<>定义，而是通过PointSetType获取，确保生命的PointType中的特性和当前的PointSetType保持一致
+using PointType = PointSetType::PointType;
+
+//创建点，按照下面p0的方式再创建p1,p2
+PointType p0;
+p0[0]=-1;p0[1]=-1;p0[2]=0;
+
+//point set中添加点：
+pointsSet->SetPoint(0,p0);
+pointsSet->SetPoint(1,p1);
+pointsSet->SetPoint(2,p2);
+```
+### pointset中点的访问
+
+最常用的方式是使用容器和迭代器进行点的访问。
+使用的类为PointsContainer。
+对于动态的point set，PointsContainer底层是基于itk::MapContainer(封装的std::map);
+对于静态的point set，PointsContainer底层是基于itk::VectorContainer(封装的std::vector);
+
+#### 通过容器添加点到pointset
+```cpp
+using PointsContainer = PointSetType::PointsContainer;
+PointsContainer::Pointer points = PointsContainer::New();
+using PointType = PointSetType::PointType;
+PointType p0,p1;
+p0[0]=-1;p0[1]=0;p0[2]=0;
+p1[0]=1;p1[1]=0;p1[2]=0;
+
+//将点插入到容器中
+unsigned int pointID=0;
+points->InsertElement(pointID++, p0);
+points->InsertElement(pointID++, p1);
+
+//将容器中的点添加到point set
+pointSet->SetPoints(points);
 ```
 
+#### 通过容器访问pointset中的点
+
+```cpp
+//pointset中点读取到容器中
+PointsContainer::Pointer points2 = pointSet->GetPoints();
+//声明一个迭代器
+using PointsIterator = PointsContainer::Iterator;
+
+PointsIterator tmp = points2->Begin();//迭代的指针
+PointsIterator end = points2->End();//迭代的截止条件
+while(tmp!=end){
+    PointType p = tmp.Value();//获取当前迭代到的点的值
+    std::cout << p << std::endl;
+    ++tmp;//向下一个指针遍历
+}
+```
+
+### 采用不同的pixel type定义点和点云
+
+点云上的每一个点出了具有坐标属性，它还能被赋予一个pixel值。它可以通过SetPointData/GetPointData进行设置或访问。
+
+前面点云的pixel type通常为一个标量。但在itk中，同样允许将点云的pixel type定义为其他更复杂的类型。比如RBG值，可以表示点云的颜色；再比如vector，可以表示如点云上点的法向量（3维vector）等。
+
+#### 使用RBG像素值定义point
+
+```cpp
+using PixelType=itk::RGBPixel<float>;
+```
+
+#### 使用向量定义point
+
+```cpp
+using PixelType=itk::Vector<float, 3>;
+```
 
 ## itk::Mesh
 
@@ -67,7 +142,7 @@ mesh上进行点遍历的迭代器类型为：
 //迭代器类型设置别名
 using PointIterator = MeshType::PointsContainer::Iterator
 //设置迭代器的开始位置和截止位置，即mesh的第一个点和最后一个点
-PointsIterator tmp = mesh->GetPoints()->Begin();
+PointsIterator tmp = mesh->GetPoints()->Begin();//mesh->GetPoints()函数实际上是返回了一个容器
 PointsIterator end = mesh->GetPoints()->End();
 //迭代获取mesh上的所有点
 while(tmp!=end){
@@ -167,10 +242,68 @@ MaxTopologicalMimension,
 CoordinateType, 
 InterpolationWeightType, 
 CellDataType>
-//声明一种mesh，使用前面声明的特性类型
+//声明一种mesh，使用前面声明的特性类型 
 using MeshType = itk::Mesh<PixelType, PointDimension, MeshTraits>;
 ```
 我们定义了一种自定义特性的mesh（点维度维3d，cell最大维度维2d，pixel、cell、坐标和插值权重数据类型均为double）。然后就可以利用这种特定的类型，去实例化mesh对象，然后进行添加点、cell等一系列的操作。这些操作和使用默认类型的mesh完全一致。
 
+### 简化的mesh创建方式
+
+itk::Mesh是一个非常通用和和灵活的类，这也导致了mesh的创建过程比较繁琐。
+
+我们可以通过itk::AutomaticTopologyMeshSource类，简化mesh的创建。这个类可以根据你添加的cells，自动的生成K-complex的mesh。
+
+```cpp
+using PixelType = float;
+using MeshType = itk::Mesh<PixelType, 3>;
+
+//声明一个自动拓扑的mesh源类型，基于前面定义的MeshType
+using MeshSourceType = itk::AutomaticTopologyMeshSource<MeshType>;
+
+//实例化一个mesh source对象
+MeshSourceType::Pointer meshSource;
+meshSource = MeshSourceType::New();
+
+//对mesh source对象添加四面体结构的简易方式：
+meshSource->AddTetrahedron(
+    meshSource->AddPoint(-1,-1,-1),
+    meshSource->AddPoint(1,1,-1),
+    meshSource->AddPoint(1,-1,1),
+    meshSource->AddPoint(-1,1,1));
+```
+前面的介绍经过了复杂的流程，创建点，mesh添加点，点添加到四面体cell，mesh添加四面体cell；此处可以一句话搞定。
+同样可以通过这种方式添加Triangle Faces（三角面片），使用AddTriangle()即可，不过只需要三个点。
+
+这种方式虽然简便，但存在硬伤。当我们会在多个高维cell中用到相同的点时，上面的方式会出问题，因为mesh会对同一个点进行多次AddPoint操作。因此有另一种方式。
+
+```cpp
+//IdentifierType：cell在mesh中的id
+//IdentifierArrayType：IdentifierType的数组
+using IdentifierArrayType = MeshSourceType::IdentifierArrayType;
+
+//创建一个数组存储新添加的point cell在mesh中的id
+IdentifierArrayType idArray(4);
+
+//创建一个点并添加到mesh，同时记录他的cell id
+using PointType = MeshType::PointType;
+PointType p;
+p[0] = -2;p[1] = -2;p[2] = -2;
+idArray[0] = meshSource->AddPoint(p);//添加第1个点
+
+p[0] = 2;p[1] = 2;p[2] = -2;
+idArray[1] = meshSource->AddPoint(p);//添加第2个点
+
+p[0] = 2;p[1] = -2;p[2] = 2;
+idArray[1] = meshSource->AddPoint(p);//添加第3个点
+p[0] = -2;p[1] = 2;p[2] = 2;
+idArray[1] = meshSource->AddPoint(p);//添加第4个点
+
+//现在可以根据点的cell id添加高维cell，如三角面片：
+meshSource->AddTriangle(idArray[0] ,idArray[1], idArray[2]);
+meshSource->AddTriangle(idArray[1] ,idArray[2], idArray[3]);
+meshSource->AddTriangle(idArray[2] ,idArray[3], idArray[0]);
+meshSource->AddTriangle(idArray[3] ,idArray[0], idArray[1]);
+```
+这种方式创建方式更加灵活实用。也是最常采用的形式。
 
 
