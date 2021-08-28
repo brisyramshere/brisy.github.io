@@ -2,8 +2,11 @@
 
 空间对象类：itk::SpatialObject
 
-## 空间对象的使用场景
+空间对象类的存在使得我们可以将任意的数据结构，如图像、mesh、点、箭头等，在一个空间中表示。将所有物体在一个空间中进行管理，今儿可以方便的对这些物体的位置关系进行比较，并方便于如配准、图像和分割结果的重叠显示、不同分辨率图像的同空间显示等等。
 
+空间对象类本身不是一种特定的数据类型，而是将任意的数据类型，附上空间变换信息、和对象之间的层级关系信息后，定义在一个新的空间坐标中，所形成的新的类。
+
+## 空间对象的使用场景
 
 ### 模型到图像的配准
 
@@ -133,7 +136,8 @@ obj1->Update();//需要执行update函数重新计算所有的依从的变换；
 
 $X^{'} = R * ( S * X - C ) + C +V$
 
-R为旋转矩阵；S为缩放尺度；C为旋转中心坐标；V为平移向量或ffset。
+R为旋转矩阵；S
+为缩放尺度；C为旋转中心坐标；V为平移向量或ffset。
 因此M和T分别定义为：
 
 $M=R*S$
@@ -144,37 +148,145 @@ $T=C+V-R*C$
 
 ## 空间物体的类型
 
+To do...
+
 ### 箭头类：ArrowSpatialObject
 
-### 球类：BolbSpatialObject
+ArrowSpatialObject表示一个空间中的箭头物体。它包括以下属性需要设置：
+- 箭头起点位置属性（PointType表示）：通过SetPositionInObjectSpace()函数设置
+- 箭头方向属性（VectorType表示）：通过SetDirectionInObjectSpace()函数设置
+- 箭头长度属性（标量表示）：通过SetLengthInObjectSpace()函数设置
+
+以下为简单的实例，描述arrow空间对象的创建流程：
+```cpp
+#include "itkArrowSpatialObject.h"
+
+using ArrowType = itk::ArrowSpatialObject<3>;
+ArrowType::Pointer pArrow = ArrowType::New();
+
+ArrowType::PointType pos;
+pos.Fill(1);
+pArrow->SetPositionInObjectSpace(pos);// 设置位置属性
+pArrow->SetLengthInObjectSpace(2);//设置长度属性
+ArrowType::VectorType dir;
+dir.Fill(0);
+dir[1]=1.0;
+pArrow->SetDirectionInObjectSpace(dir);//设置方向属性
+```
+
+### 标记点:LandmarkSpatialObject
+
+LandmarkSpatialObject本质上表示的是一个landmark点的列表，每一个landmark点有一个position属性和color属性。
+
+创建一个landmark包含以下步骤：
+1. 创建LandmarkPoint, LandmarkPoint表示一个landmark点，它需要设置position属性和color属性；通过:
+   - SetPositionInObjectSpace(itk::Point)设置position;
+   - SetColor()设置颜色
+2. 创建LandmarkPointList装载所有LandmarkPoint；
+3. 创建Landmark，设置LandmarkPointList；
+
+下面演示创建一个landmark空间对象的实例：
+
+```cpp
+#include "itkLandmarkSpatialObject.h"
+//别名简化
+using LandmarkType = ikt::LandmarkSpatialObject<3>;
+using LandmerkPointer = LandmarkType::Pointer;
+using LandmarkPointType = LandmarkType::LandmarkPointType;
+using PointType = LandmarkType::PointrType;
+//实例化一个landmark对象lmk
+LandmerkPointer lmk = LandmarkType::New();
+//lmk设置名称和id
+lmk.GetPorperty().SetName("Landmark");
+lmk->SetId(1);
+//创建一个landmark点list变量，并向list添加landmark点；每个landmark点需要设置position+color属性
+LandmarkType::LandmarkPointListType list;
+for(int i=0;i<5;i++)
+{
+    LandmarkPointType p;
+    PointType pnt;
+    pnt[0]=i;pnt[1]=i+1;pnt[2]=i+2;
+    p.SetPositionInObjectSpace(pnt);
+    p.SetColor(1,0,0,1);
+    list.push_back(p);
+}
+//landmark点的列表添加给landmark对象（lmk）
+lmk->SetPoint(list);
+lmk->Update();
+```
+
+### 斑点类：BolbSpatialObject
+
+BolbSpatialObject表示一个N维的斑点结构。它派生自itkPointBasedSpatialObject.
+
+Bolb和landmark的创建方式非常类似。形式也非常类似。只是它的基础元素是BoldPointType而非LandmarkPointType。
 
 ### 椭圆类：EllipseSpatialObject
 
+EllipseSpatialObject表示一个N维的椭圆。
+
+创建一个N维椭圆，需要设置各个维度上的半径，通过SetRadiusInObject(EllipseType::ArrayType radius)实现；
+
+另外还有其他可用的成员函数：
+- IsInsideInWorldSpace(ikt::Point)：判断点是否在椭圆内；
+- IsEvaluableAtInWorldSpace(itk::Point)：判断点是否是可估值的；
+- ValueAtInWorldSpace(itk::Point, double)：获取对应位置的值
+- GetMyBoundingBoxInWorldSpace()：获取椭圆的外包矩形框，返回类型为EllipseType::BoundingBoxType的指针。
+
 ### 高斯类：GaussianSpatialObject
+
+GaussianSpatialObject表示在空间中的一个N维高斯核。
+
+高斯核的创建通常需要指定以下参数：
+- SetMaximum(2):设置高斯核的最大值；
+- SetRadiusInObjectSpace(3):设置高斯核的半径。
+
+同样可以通过ValueAtInWorldSpace(itk::Point, value)的方式获取指定点位置的值。
 
 ### 组类：GroupSpatialObject
 
 GroupSpatialObject不和任何数据相关联，它主要用于将object分组，或伪object添加变换。
 
-### 图像类
+### 图像类：ImageSpatialObject
 
 ImageSpatialObject就是对itk::Image进行了一层封装，然后加上了其在空间转的变换信息，以及父子层级关系。
 
-### 图像掩膜
+### 图像掩膜:ImageMaskSpatialObject
 
 ImageMaskSpatialObject和ImageSpatialObject非常类似，惟一的区别在于IsInsideInWorldSpace()只在像素不为0的时候才返回true。即对于背景区域，不认为是mask物体的范围。
 
-### 标记点
 
-### 线
+### 线:LineSpatialObject
 
-### mesh
+定义N维空间中的一条线。它具有以下几个属性：
+- position
+- normals（与线垂直的向量），有N-1个（比如三位直线由2个normal），由itk::CovariantVector表示
+- color
+ 
+### mesh:MeshSpatialObject
 
-### 表面
+包含以下成员：
+- 一个指向对应的itk::Mesh的指针；
+- 空间变换矩阵；
+- 父子层级关系。
 
-### 管状
+### 表面:SurfaceSpatialObject
 
-### DTI管状
+由一系列的处于surface上的点(SurfacePointType)组成。每个点具有位置（PointType）、法向量(CovariantVector)。
+
+### 管状:TubeSpatialObject
+
+常用来表示血管、器官、神经、胆管等结构。
+
+它由一系列中心线上的点(TubePointType)组成，每个点包含:
+- 位置（Point
+- 半径
+- 法向量(CovariantVector)：3维管状结构有两个normal；通过SetNormal1InObjectSpace和SetNormal2InObjectSpace函数设置。
+- 其他特性。
+
+### DTI管状:DTITubeSpatialObject
+
+用来特别的表示使用DTI数据重建得到的神经纤维束管状结构的空间物体类。派生自itk::TubeSpatialObject
 
 ## 空间物体的读写
 

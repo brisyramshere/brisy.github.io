@@ -2,9 +2,14 @@
 
 [TOC]
 
-itk::Image
-itk::Mesh
-itk::PointSet
+学习ITK之前，首先需要了解的就是ITK中的基本数据结构，即ITK中，数据是如何存储和表示的。
+
+ITK中最基本的三种数据结构是：
+itk::Image：体素矩阵存储的图像；
+itk::Mesh：mesh数据，包含顶点point和cell，cell类型有多种，如常用的三角面片triangle face。
+itk::PointSet：点集。
+
+下面对这三种数据结构的创建和访问方式进行讲解。
 
 ## itk::Image
 
