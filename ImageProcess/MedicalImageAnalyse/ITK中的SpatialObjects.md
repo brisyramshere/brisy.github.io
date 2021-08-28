@@ -154,9 +154,15 @@ $T=C+V-R*C$
 
 ### 组类：GroupSpatialObject
 
+GroupSpatialObject不和任何数据相关联，它主要用于将object分组，或伪object添加变换。
+
 ### 图像类
 
+ImageSpatialObject就是对itk::Image进行了一层封装，然后加上了其在空间转的变换信息，以及父子层级关系。
+
 ### 图像掩膜
+
+ImageMaskSpatialObject和ImageSpatialObject非常类似，惟一的区别在于IsInsideInWorldSpace()只在像素不为0的时候才返回true。即对于背景区域，不认为是mask物体的范围。
 
 ### 标记点
 
