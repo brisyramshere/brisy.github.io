@@ -16,6 +16,7 @@
 - [3D Slicer使用介绍](./Others/3dSlicerExtentions.md)
 - [ITK架构设计](./ImageProcess/MedicalImageAnalyse/ITK软件架构.md)
 - [ITK基本数据结构](./ImageProcess/MedicalImageAnalyse/ITK数据结构.md)
+- [ITK的SpatialObject和层级关系](./ImageProcess/MedicalImageAnalyse/ITK中的SpatialObjects.md)
 - [MONAI-开源医学影像框架介绍](./ImageProcess/MedicalImageAnalyse/monai.md)
 
 ### 点云和Mesh处理
