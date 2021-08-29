@@ -146,9 +146,9 @@ $T=C+V-R*C$
 
 ### 显示仿射矩阵的代码示例
 
-## 空间物体的类型
-
 To do...
+
+## 空间物体的类型
 
 ### 箭头类：ArrowSpatialObject
 
@@ -290,5 +290,8 @@ ImageMaskSpatialObject和ImageSpatialObject非常类似，惟一的区别在于I
 
 ## 空间物体的读写
 
+TO DO...
+
 ## 统计计算
 
+TO DO...
