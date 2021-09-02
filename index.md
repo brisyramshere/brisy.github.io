@@ -22,6 +22,7 @@
   - [ITK_理解Filter和Module的使用和创建](./ImageProcess/MedicalImageAnalyse/ITK/ITK_理解Filter和Module的使用和创建.md)
   - [ITK_Filter例举和学习](./ImageProcess/MedicalImageAnalyse/ITK/ITK_Filter的例举和学习.md)
   - [IKT_配准框架学习](./ImageProcess/MedicalImageAnalyse/ITK/ITK_配准框架.md)
+  - [ITK_ModelbasedRegistration](./ImageProcess/MedicalImageAnalyse/ITK/ITK_ModelbasedRegistration.md)
 - [MONAI-开源医学影像框架介绍](./ImageProcess/MedicalImageAnalyse/monai.md)
 
 ### 点云和Mesh处理
