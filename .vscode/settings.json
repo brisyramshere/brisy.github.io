@@ -1,3 +1,7 @@
 {
-    "pasteImage.path": "${currentFileDir}/imgres"
+    "pasteImage.path": "${currentFileDir}/imgres",
+    "[markdown]":{
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": true
+    }
 }

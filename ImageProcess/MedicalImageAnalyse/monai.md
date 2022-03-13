@@ -38,3 +38,4 @@ NVIDIA Clara是NVIDIA的一个适用于医疗健康行业的智能计算平台�
 包含算法：DeepGrow DeepEidt 自动分割
 
 3D Slicer插件
+monai支持3d slicer的插件
